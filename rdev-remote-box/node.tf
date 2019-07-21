@@ -1,11 +1,23 @@
+variable "creds_file" {
+  type = "string"
+}
+
+variable "project_id" {
+  type = "string"
+}
+
+variable "bucket_name" {
+  type = "string"
+}
+
 provider "google" {
-  credentials = "${file("~/.gcp/personal-account.json")}"
-  project     = "testproj-174015"
+  credentials = "${file("${var.creds_file}")}"
+  project     = "${var.project_id}"
   region      = "us-central1"
   zone        = "us-central1-c"
 }
-resource "google_compute_instance" "rdev-sync-box" {
-  name         = "rdev"
+resource "google_compute_instance" "rdev-box" {
+  name         = "${var.bucket_name}-box"
   machine_type = "n1-standard-2"
   zone         = "us-central1-c"
 
@@ -43,7 +55,7 @@ resource "google_compute_instance" "rdev-sync-box" {
     apt-get update
     apt-get install gcsfuse
     mkdir /src
-    gcsfuse rdev-sync-box-io /src
+    gcsfuse ${var.bucket_name} /src
   EOF
 
 }

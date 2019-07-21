@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  sync-box:
+    build:
+      context: rdev-sync-box
+      args:
+        project_id: ${PROJECT_ID}
+        bucket_name: ${BUCKET_NAME}
+    volumes:
+    - ${CREDS_FILE}:/home/rdev/creds/devbox.creds.json
+    - ${PWD}:/home/rdev/src
