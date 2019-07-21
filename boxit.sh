@@ -46,7 +46,7 @@ if [ 'up' == "${ACTION}" ]; then
     terraform apply -auto-approve -var "creds_file=${CREDS_FILE}" -var "project_id=${PROJECT_ID}" -var "bucket_name=${BUCKET_NAME}" ${TF_DIR}
 elif [ 'down' == "${ACTION}" ]; then
     docker-compose -f ${COMPOSE_FILE} down
-    terraform destroy ${TF_DIR}
+    terraform destroy -auto-approve -var "creds_file=${CREDS_FILE}" -var "project_id=${PROJECT_ID}" -var "bucket_name=${BUCKET_NAME}" ${TF_DIR}
 else
     echo "Action is not one of the allowed values"
     usage
