@@ -10,11 +10,20 @@ variable "bucket_name" {
   type = "string"
 }
 
+variable "user_name" {
+  type = "string"
+}
+
 provider "google" {
   credentials = "${file("${var.creds_file}")}"
   project     = "${var.project_id}"
   region      = "us-central1"
   zone        = "us-central1-c"
+}
+
+resource "google_storage_bucket" "transfer_bucket" {
+  name = "${var.bucket_name}"
+  force_destroy = true
 }
 resource "google_compute_instance" "rdev-box" {
   name         = "${var.bucket_name}-box"
@@ -54,8 +63,9 @@ resource "google_compute_instance" "rdev-box" {
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
     apt-get update
     apt-get install gcsfuse
-    mkdir /src
-    gcsfuse ${var.bucket_name} /src
+    mkdir -p /home/${var.user_name}/src
+    chown -R emcdaniel:ubuntu /home/${var.user_name}
+    sudo -u ${var.user_name} gcsfuse --implicit-dirs ${google_storage_bucket.transfer_bucket.name} /home/${var.user_name}/src
   EOF
 
 }
